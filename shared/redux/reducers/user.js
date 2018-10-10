@@ -43,13 +43,6 @@ export const initialState = {
     currency: 'EOS',
     fullName: 'Eos',
   },
-  telosData: {
-    balance: 0,
-    address: '',
-    isBalanceFetched: true,
-    currency: 'TLOS',
-    fullName: 'Telos',
-  },
   tokensData: {},
 }
 

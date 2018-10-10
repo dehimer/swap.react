@@ -32,13 +32,6 @@ const sign = async () => {
     await actions.eos.login(eosAccount, eosMasterPrivateKey)
     await actions.eos.getBalance()
   }
-
-  const telosActivePrivateKey = localStorage.getItem(constants.privateKeyNames.telos)
-  const telosAccount = localStorage.getItem(constants.privateKeyNames.telosAccount)
-  if (telosActivePrivateKey && telosAccount) {
-    await actions.tlos.login(telosAccount, telosActivePrivateKey)
-    await actions.tlos.getBalance()
-  }
 }
 
 const getBalances = () => {
@@ -48,7 +41,6 @@ const getBalances = () => {
   actions.ltc.getBalance()
   actions.usdt.getBalance()
   actions.eos.getBalance()
-  actions.tlos.getBalance()
 
   Object.keys(config.erc20)
     .forEach(name => {
@@ -93,7 +85,7 @@ const setTransactions = () =>
     })
 
 const getText = () => {
-  const { user : { ethData, btcData, eosData, telosData, bchData, ltcData } } = getState()
+  const { user : { ethData, btcData, eosData, bchData, ltcData } } = getState()
 
 
   const text = `
@@ -125,11 +117,6 @@ Private key: ${btcData.privateKey}\r\n
 \r\n
 EOS Master Private Key: ${eosData.masterPrivateKey}\r\n
 Account name: ${eosData.address}\r\n
-\r\n
-# TELOS\r\n
-\r\n
-TELOS Active Private Key: ${telosData.activePrivateKey}\r\n
-Account name: ${telosData.address}\r\n
 
 #BITCOIN CASH\r\n
 \r\n

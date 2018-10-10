@@ -14,7 +14,6 @@ import bch from './bch'
 import ltc from './ltc'
 import eth from './eth'
 import eos from './eos'
-import tlos from './tlos'
 import token from './token'
 import nimiq from './nimiq'
 import api from './api'
@@ -51,7 +50,6 @@ export default {
   token,
   nimiq,
   eos,
-  tlos,
   feed,
   analytics,
   referral,

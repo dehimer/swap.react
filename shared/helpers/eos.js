@@ -1,24 +1,19 @@
 import { getState } from 'redux/core'
 import config from 'app-config'
 
+
 let eosInstance = null
-let telosInstance = null
 let eccInstance = null
 let semaphore = false
 
-const keyProvider = (telos = false) => {
-  const userDataKey = telos ? 'telosData' : 'eosData'
+const keyProvider = ({ transaction, pubkeys }) => {
+  const { user: { eosData: { privateKeys, publicKeys } } } = getState()
 
-  return ({ transaction, pubkeys }) => {
-    const { user } = getState()
-    const { privateKeys, publicKeys } = user[userDataKey]
-
-    if (pubkeys || telos) {
-      return [privateKeys.active]
-    } else {
-      return [publicKeys.active]
-    }
+  if (!pubkeys) {
+    return [publicKeys.active]
   }
+
+  return [privateKeys.active]
 }
 
 const setupEOS = async () => {
@@ -26,57 +21,47 @@ const setupEOS = async () => {
   const EOS = await import('eosjs')
   console.log('eos finish import')
 
-  const { httpEndpoint: eosHttpEndpoint, chainId: eosChainId } = config.api.eos
-  const { httpEndpoint: telosHttpEndpoint, chainId: telosChainId } = config.api.telos
-  const eosKeyProvider = keyProvider(false)
-  const telosKeyProvider = keyProvider(true)
+  const { httpEndpoint, chainId } = config.api.eos
 
   eosInstance = EOS({
-    chainId: eosChainId,
-    httpEndpoint: eosHttpEndpoint,
-    keyProvider: eosKeyProvider,
-  })
-
-  telosInstance = EOS({
-    chainId: telosChainId,
-    httpEndpoint: telosHttpEndpoint,
-    keyProvider: telosKeyProvider
+    chainId,
+    httpEndpoint,
+    keyProvider,
   })
 
   eccInstance = EOS.modules.ecc
 }
 
 const timeout = async (ms) => new Promise(resolve => setTimeout(resolve, ms))
-const init = async () => {
-  if (eosInstance === null && semaphore === false) {
-    semaphore = true
-    await setupEOS()
-  } else if (eosInstance === null && semaphore === true) {
-    await timeout(5000)
-  }
-}
 
 const eos = {
   async getInstance() {
-    await init()
+    if (eosInstance === null && semaphore === false) {
+      semaphore = true
+      await setupEOS()
+    } else if (eosInstance === null && semaphore === true) {
+      await timeout(5000)
+    }
+
+    console.log('eos instance', eosInstance)
+
     return eosInstance
-  }
+  },
 }
 
 const ecc = {
   async getInstance() {
-    await init()
-    return eccInstance
-  }
-}
+    if (eosInstance === null && semaphore === false) {
+      semaphore = true
+      await setupEOS()
+    } else if (eosInstance === null && semaphore === true) {
+      await timeout(5000)
+    }
 
-const telos = {
-  async getInstance() {
-    await init()
-    return telosInstance
-  }
+    return eccInstance
+  },
 }
 
 export {
-  eos, telos, ecc
+  eos, ecc,
 }

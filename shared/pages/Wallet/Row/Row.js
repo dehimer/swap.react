@@ -83,10 +83,6 @@ export default class Row extends Component {
     actions.modals.open(constants.modals.EosRegister, {})
   }
 
-  handleTelosRegister = () => {
-    actions.modals.open(constants.modals.TelosRegister, {})
-  }
-
   handleEosBuyAccount = async () => {
     actions.modals.open(constants.modals.EosBuyAccount)
   }
@@ -183,9 +179,6 @@ export default class Row extends Component {
               }
               {
                 currency === 'EOS' && address === '' && <button styleName="button" onClick={this.handleEosBuyAccount}>Buy account</button>
-              }
-              {
-                currency === 'TLOS' && address === '' && <button styleName="button" onClick={this.handleTelosRegister}>Login</button>
               }
               { isAddressCopied && <p styleName="copied" >Address copied to clipboard</p> }
             </td>
